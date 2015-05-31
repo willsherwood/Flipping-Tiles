@@ -17,10 +17,15 @@ public class Main {
 
         Board a = new AdjacencyBoard(3, 3);
         Board b = new AdjacencyBoard(3, 3);
-        b.edgesConnectedTo(new Pair<>(0, 0)).forEach(b::flip);
-        b.edgesConnectedTo(new Pair<>(2, 1)).forEach(b::flip);
+        b = b.flipAllConnectedTo(new Pair<>(0, 0));
+        b = b.flipAllConnectedTo(new Pair<>(2, 1));
+        b = b.flipAllConnectedTo(new Pair<>(1, 1));
 
-        new Solver(a, b).solve();
+//        b = b.flipAllConnectedTo(new Pair<>(1, 2));
+//        b = b.flipAllConnectedTo(new Pair<>(2, 2));
+
+        System.out.println(b);
+        System.out.println(new Solver(a, b).solve());
 
 
         System.exit(0);

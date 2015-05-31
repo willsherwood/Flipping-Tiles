@@ -22,7 +22,7 @@ public class EdgeVisualizer extends JComponent {
 
     public void select (Pair<Integer> mouse) {
         Pair<Integer> pair = coordinates(mouse);
-        if (!pair.validIntegerPair(board.dimensions().height, board.dimensions().width))
+        if (!pair.validIntegerPair(board.dimensions().first, board.dimensions().last))
             return;
         toDraw = new HashSet<>();
         toDraw.addAll(board.edgesConnectedTo(pair));
@@ -37,8 +37,8 @@ public class EdgeVisualizer extends JComponent {
         Dimension window = getSize();
         int C = window.width - 1;
         int R = window.height - 1;
-        int RR = board.dimensions().height;
-        int CC = board.dimensions().width;
+        int RR = board.dimensions().first;
+        int CC = board.dimensions().last;
         for (int r = 0; r < RR; r++) {
             for (int c = 0; c < CC; c++) {
                 if (board.set(new Pair<>(r, c)))
@@ -57,14 +57,14 @@ public class EdgeVisualizer extends JComponent {
 
     public void flip (Pair<Integer> mouse) {
         Pair<Integer> pair = coordinates(mouse);
-        if (!pair.validIntegerPair(board.dimensions().height, board.dimensions().width))
+        if (!pair.validIntegerPair(board.dimensions().first, board.dimensions().last))
             return;
         board.edgesConnectedTo(pair).forEach(board::flip);
     }
 
     private Pair<Integer> coordinates (Pair<Integer> mouse) {
-        int r = mouse.first * board.dimensions().height / getSize().height;
-        int c = mouse.last * board.dimensions().width / getSize().width;
+        int r = mouse.first * board.dimensions().first / getSize().height;
+        int c = mouse.last * board.dimensions().last / getSize().width;
         return new Pair<>(r, c);
     }
 }

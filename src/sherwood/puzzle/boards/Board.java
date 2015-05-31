@@ -1,15 +1,26 @@
 package sherwood.puzzle.boards;
 
 import sherwood.puzzle.Pair;
+import sherwood.puzzle.sherwood.util.DeepCopy;
 
-import java.awt.Dimension;
 import java.util.*;
 
 public class Board {
 
     private int rows, columns;
-    private Map<Pair<Integer>, Set<Pair<Integer>>> map;
+    protected Map<Pair<Integer>, Set<Pair<Integer>>> map;
     public boolean[][] actual;
+
+    protected Board copy () {
+        Board b = new Board(rows, columns);
+        DeepCopy.deepCopy(actual, b.actual);
+        this.map.entrySet().forEach(a -> {
+            Set<Pair<Integer>> ns = new HashSet<>();
+            ns.addAll(a.getValue());
+            b.map.put(a.getKey(), ns);
+        });
+        return b;
+    }
 
     public Board (int rows, int columns) {
         this.rows = rows;
@@ -20,24 +31,37 @@ public class Board {
         Pair.range(rows, columns).forEach(a -> map.put(a, new HashSet<>()));
     }
 
-    protected boolean edge (Pair<Integer> from, Pair<Integer> to) {
-        return map.get(from).add(to);
+    protected Board edge (Pair<Integer> from, Pair<Integer> to) {
+        Board b = copy();
+        b.map.get(from).add(to);
+        return b;
     }
 
-    protected boolean remove (Pair<Integer> from, Pair<Integer> to) {
-        return map.get(from).remove(to);
+    protected Board remove (Pair<Integer> from, Pair<Integer> to) {
+        Board b = copy();
+        b.map.get(from).remove(to);
+        return b;
     }
 
     public Set<Pair<Integer>> edgesConnectedTo (Pair<Integer> point) {
         return map.getOrDefault(point, new HashSet<>());
     }
 
-    public Dimension dimensions () {
-        return new Dimension(rows, columns);
+    public Board flipAllConnectedTo (Pair<Integer> point) {
+        Board b = copy();
+        for (Pair<Integer> pair : edgesConnectedTo(point))
+            b = b.flip(pair);
+        return b;
     }
 
-    public void flip (Pair<Integer> pair) {
-        actual[pair.first][pair.last] = !actual[pair.first][pair.last];
+    public Pair<Integer> dimensions () {
+        return new Pair<>(rows, columns);
+    }
+
+    public Board flip (Pair<Integer> pair) {
+        Board b = copy();
+        b.actual[pair.first][pair.last] = !b.actual[pair.first][pair.last];
+        return b;
     }
 
     public boolean set (Pair<Integer> pair) {
